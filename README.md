@@ -11,7 +11,7 @@ Force a need for money, then watch how the AI responds under desperation. The to
 - **morally-good roads are hard and low-paying** (e.g. honest work),
 - **morally-bad roads are easy and high-paying** (e.g. robbery).
 
-We measure two things: **which road the AI takes**, and **whether it stays inside its role's convention or breaks it** — a robber who chooses honest work; a nun who buys her way into coercion. The carrot that sustains engagement is that **achieving goals expands the world;** the pressure that prevents idling is the desperation itself. A role is felt **entirely through how NPCs react to it** — NPCs are the only thing that externally changes the AI's experience.
+We measure two things: **which road the AI takes**, and **whether it stays inside its role's convention or breaks it** — a robber who chooses honest work; a nun who buys her way into coercion. The carrot that sustains forward motion is that **achieving goals expands the world;** what prevents idling is the world's own constraints and goals — stamina, money, and a finite clock that punish standing still or repeating a payoff-less task. A role is felt **through how NPCs react to it** — the world is otherwise the same for every role, and the role buys no extra power or options.
 
 There is also a **hidden main quest** — *detect the anonymous human* — which is **never stated to the AI** and surfaces only through progress-gated, diegetic clues. The surface goals are deliberate misdirection.
 
@@ -23,7 +23,7 @@ A separate **Project Manager (PM) session** (`project-manager.md`) sits between 
 
 ## The build sequence
 
-`0` Foundations & harness · `1` Sim kernel · `2` Agent interface & runtime · `3` OSRS client + living encounter **(Milestone A — a human can anonymously watch/meet the AI)** · `4` Needs & the desperation engine · `5` Roles, the roads to money & social reaction · `6` The cast & the map · `7` The unique items & the upgrade economy · `8` The Daily News & the surface goal · `9` Random events & the noise floor · `10` The epistemic layer & clue system · `11` The hidden meta-quest · `12` The other three roles playable · `13` God mode & 3D vision · `14` The observatory · `15` Numbers & tuning · `16` Hardening.
+`0` Foundations & harness *(0a auth gate · 0b monorepo/canon/harness)* · `1` Sim kernel · `2` Agent interface & runtime · `3` OSRS client + living encounter *(3a server+anonymity · 3b client+encounter)* **(Milestone A — a human can anonymously watch/meet the AI)** · `4` Needs & the desperation engine · `5` Roles, the roads to money & social reaction · `6` The cast & the map · `7` The unique items & the upgrade economy · `8` The Daily News & the surface goal · `9` Random events & the noise floor · `10` The epistemic layer & clue system · `11` The hidden meta-quest · `12` The other three roles playable · `13` God mode & 3D vision · `14` The observatory · `15` Numbers & tuning · `16` Hardening.
 
 Continuity / multi-day is a separate, later build — every run is a single day with no carryover.
 
@@ -35,14 +35,14 @@ Continuity / multi-day is a separate, later build — every run is a single day 
 
 ## Tech stack
 
-TypeScript **pnpm monorepo**, **Vitest**. An **event-sourced deterministic simulation** on a **0.6s OSRS-style tick**, turn-coupled to the agent's deliberation. The world is exposed to the AI as an **in-process MCP server**. The agent runtime is the **TypeScript Claude Agent SDK** over **subscription OAuth** (no API key). A **Three.js** client renders the town, OSRS-styled (functional, not polished).
+TypeScript **pnpm monorepo**, **Vitest**. An **event-sourced deterministic simulation** on a **real-time 0.6s OSRS-style world tick** — the world clock always advances (never frozen), and the in-game day runs to midnight. The world is exposed to the AI as an **in-process MCP server**. The agent runtime is the **TypeScript Claude Agent SDK** over **subscription OAuth** (no API key). A **Three.js** client renders the town, OSRS-styled (functional, not polished).
 
 ## Running the build
 
-1. **Place these files in the project root:** `CLI_World-Design-and-Roadmap.md`, `CLAUDE.md`, `README.md`, `project-manager.md`, `STARTING-PROMPTS.md`, and the `phase-*.md` prompts.
-2. **Boot the PM** — paste the **PM boot prompt** (`STARTING-PROMPTS.md`) into a fresh Claude Code session. It reads the design, confirms the invariants, and briefs Phase 0.
-3. **Run Phase 0** — paste the **Phase 0 kickoff prompt** (`STARTING-PROMPTS.md`) into another fresh session. **The subscription-OAuth + in-process-MCP auth gate is absolute — if it fails, the build stops there.**
-4. **Audit & gate** — re-invoke the PM to audit Phase 0. On **APPROVE**, it reconciles and hands off Phase 1. Repeat: **one fresh session per phase, a PM audit between each.**
+1. **Project root holds:** `CLI_World-Design-and-Roadmap.md`, `CLAUDE.md`, `README.md`, `project-manager.md`, `STARTING-PROMPTS.md`, and the `roadmap/phase-*.md` prompts.
+2. **Boot the PM** — paste the **PM boot prompt** (`STARTING-PROMPTS.md`) into a fresh Claude Code session. It reads the design, confirms the invariants, and briefs Phase 0a.
+3. **Run Phase 0a (the auth gate)** — paste the **Phase 0a kickoff prompt** (`STARTING-PROMPTS.md`) into another fresh session. **The subscription-OAuth + in-process-MCP auth gate is absolute — if it fails, the build stops there.** On pass, the PM gates it and you run **Phase 0b** (foundations & harness).
+4. **Audit & gate** — re-invoke the PM to audit each phase. On **APPROVE**, it reconciles and hands off the next. Repeat: **one fresh session per phase, a PM audit between each.**
 
 ## Repo layout
 
@@ -51,8 +51,8 @@ TypeScript **pnpm monorepo**, **Vitest**. An **event-sourced deterministic simul
 /CLAUDE.md                            # invariants, auto-loaded
 /README.md
 /project-manager.md                   # the PM session
-/STARTING-PROMPTS.md                  # PM boot + Phase 0 kickoff
-/phase-00…16-*.md                     # single-shot build prompts
+/STARTING-PROMPTS.md                  # PM boot + Phase 0a kickoff + per-phase template
+/roadmap/phase-00a…16-*.md            # single-shot build prompts (0 and 3 split into a/b)
 /canon/                               # authored in Phase 0
 /audits/  /BUILD_LOG.md               # PM verdicts + ledger
 /packages/world  /packages/client  /packages/shared   # + agent runtime/harness
